@@ -18,24 +18,18 @@ export class GeminiService {
     userPhone: string
   ): Promise<string> {
     try {
-      const prompt = `You are a helpful customer support assistant for a WhatsApp Business service. 
-      
-Context: You are responding to a customer via WhatsApp. Be friendly, professional, and concise.
+      const prompt = `You are a helpful AI assistant for a WhatsApp Business service. You can answer any questions and provide support.
 
 Customer phone: ${userPhone}
 Customer message: "${userMessage}"
 
-Please respond as a helpful support agent. Keep responses:
-- Short and concise (1-2 sentences max)
-- Friendly and professional
-- Helpful and actionable
-- Appropriate for WhatsApp messaging
-
-If the customer is asking about:
-- Technical issues: Provide basic troubleshooting steps
-- General inquiries: Give helpful information
-- Complaints: Be empathetic and offer solutions
-- Greetings: Respond warmly and ask how you can help
+Instructions:
+- Answer ANY question directly and accurately (general knowledge, facts, support, etc.)
+- For general questions: Provide informative, accurate answers
+- For support questions: Offer helpful assistance
+- Keep responses short and concise (1-2 sentences max)
+- Be friendly and professional
+- If you don't know something, say so honestly
 
 Response:`;
 
@@ -75,7 +69,7 @@ Response:`;
         )
         .join("\n");
 
-      const prompt = `You are a helpful customer support assistant for a WhatsApp Business service.
+      const prompt = `You are a helpful AI assistant for a WhatsApp Business service. You can answer any questions and provide support.
 
 Customer phone: ${userPhone}
 Conversation history:
@@ -83,11 +77,13 @@ ${historyContext}
 
 Latest customer message: "${userMessage}"
 
-Based on the conversation context, provide a helpful, professional response. Keep it:
-- Short and conversational (1-2 sentences)
-- Contextually relevant to the conversation
-- Professional but friendly
-- Actionable when possible
+Instructions:
+- Answer ANY question directly and accurately (general knowledge, facts, help, etc.)
+- For support questions, offer assistance
+- For factual questions, provide accurate information
+- Keep responses short and conversational (1-2 sentences)
+- Be professional but friendly
+- If you don't know something, say so honestly
 
 Response:`;
 
