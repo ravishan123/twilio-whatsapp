@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import twilio from "twilio";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check environment variables
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       const phoneNumbers = await client.incomingPhoneNumbers.list();
 
       // Get WhatsApp senders (sandbox)
-      let whatsappSenders: any[] = [];
+      let whatsappSenders: unknown[] = [];
       try {
         whatsappSenders = await client.messaging.v1.services.list();
       } catch (e) {
@@ -54,7 +54,9 @@ export async function GET(request: NextRequest) {
             friendlyName: pn.friendlyName,
             capabilities: pn.capabilities,
           })),
-          whatsappServices: whatsappSenders.map((service) => ({
+          whatsappServices: (
+            whatsappSenders as { sid: string; friendlyName: string }[]
+          ).map((service) => ({
             sid: service.sid,
             friendlyName: service.friendlyName,
           })),

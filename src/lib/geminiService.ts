@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private model: unknown;
 
   constructor() {
     if (!process.env.GEMINI_API_KEY) {
@@ -33,7 +33,8 @@ Instructions:
 
 Response:`;
 
-      const result = await this.model.generateContent(prompt);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (this.model as any).generateContent(prompt);
       const response = await result.response;
       const text = response.text();
 
@@ -87,7 +88,8 @@ Instructions:
 
 Response:`;
 
-      const result = await this.model.generateContent(prompt);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (this.model as any).generateContent(prompt);
       const response = await result.response;
       const text = response.text();
 

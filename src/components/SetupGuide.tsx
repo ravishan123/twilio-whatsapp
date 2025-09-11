@@ -39,7 +39,7 @@ interface DebugInfo {
     availablePhoneNumbers: Array<{
       phoneNumber: string;
       friendlyName: string;
-      capabilities: any;
+      capabilities: unknown;
     }>;
     recommendations: string[];
   };
@@ -141,22 +141,23 @@ export default function SetupGuide() {
                                 <strong>Configured Phone:</strong>{" "}
                                 {debugInfo.debug?.configuredPhoneNumber}
                               </div>
-                              {debugInfo.debug?.availablePhoneNumbers.length >
-                                0 && (
-                                <div>
-                                  <strong>Available Numbers:</strong>
-                                  <ul className="list-disc ml-4 mt-1">
-                                    {debugInfo.debug.availablePhoneNumbers.map(
-                                      (phone, idx) => (
-                                        <li key={idx}>
-                                          {phone.phoneNumber} -{" "}
-                                          {phone.friendlyName}
-                                        </li>
-                                      )
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
+                              {debugInfo.debug?.availablePhoneNumbers &&
+                                debugInfo.debug.availablePhoneNumbers.length >
+                                  0 && (
+                                  <div>
+                                    <strong>Available Numbers:</strong>
+                                    <ul className="list-disc ml-4 mt-1">
+                                      {debugInfo.debug.availablePhoneNumbers.map(
+                                        (phone, idx) => (
+                                          <li key={idx}>
+                                            {phone.phoneNumber} -{" "}
+                                            {phone.friendlyName}
+                                          </li>
+                                        )
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
                             </div>
                           </div>
                         </AlertDescription>

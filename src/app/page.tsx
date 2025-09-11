@@ -13,7 +13,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import {
   MessageCircle,
-  Settings,
   RefreshCw,
   Phone,
   Wifi,
