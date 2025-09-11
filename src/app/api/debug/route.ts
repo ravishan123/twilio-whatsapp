@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       const phoneNumbers = await client.incomingPhoneNumbers.list();
 
       // Get WhatsApp senders (sandbox)
-      let whatsappSenders = [];
+      let whatsappSenders: any[] = [];
       try {
         whatsappSenders = await client.messaging.v1.services.list();
       } catch (e) {
