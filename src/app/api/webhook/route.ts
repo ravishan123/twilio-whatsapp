@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 import { MessageStore } from "@/lib/messageStore";
 import { TwilioWebhookData } from "@/types/message";
+import { GeminiService } from "@/lib/geminiService";
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
@@ -30,20 +31,54 @@ export async function POST(request: NextRequest) {
 
     console.log("Stored message:", message);
 
-    // Create TwiML response with auto-reply
+    // Create TwiML response with AI-powered reply
     const twiml = new MessagingResponse();
 
-    // Auto-reply to the incoming message
-    const reply = `Thanks for your message: "${data.Body}". This is an automated response from our WhatsApp chat app!`;
-    twiml.message(reply);
+    try {
+      // Get conversation history for context
+      const conversationHistory = MessageStore.getMessagesByPhoneNumber(
+        data.From
+      )
+        .slice(-6) // Get last 6 messages for context
+        .map((msg) => ({
+          message: msg.body,
+          direction: msg.direction,
+        }));
 
-    // Store the outgoing auto-reply message
-    MessageStore.addMessage({
-      from: data.To,
-      to: data.From,
-      body: reply,
-      direction: "outgoing",
-    });
+      // Generate AI response using Gemini
+      const geminiService = new GeminiService();
+      const aiReply = await geminiService.generateContextualResponse(
+        data.Body,
+        data.From,
+        conversationHistory
+      );
+
+      console.log("Generated AI reply:", aiReply);
+
+      twiml.message(aiReply);
+
+      // Store the AI-generated reply
+      MessageStore.addMessage({
+        from: data.To,
+        to: data.From,
+        body: aiReply,
+        direction: "outgoing",
+      });
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+
+      // Fallback to basic response if AI fails
+      const fallbackReply =
+        "Hello! Thanks for reaching out. Our support team is here to help you. How can we assist you today?";
+      twiml.message(fallbackReply);
+
+      MessageStore.addMessage({
+        from: data.To,
+        to: data.From,
+        body: fallbackReply,
+        direction: "outgoing",
+      });
+    }
 
     return new NextResponse(twiml.toString(), {
       status: 200,

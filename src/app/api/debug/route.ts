@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const phoneNumber = process.env.TWILIO_PHONE_NUMBER;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
 
     if (!accountSid || !authToken || !phoneNumber) {
       return NextResponse.json({
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
           accountSid: accountSid ? "✓ Set" : "✗ Missing",
           authToken: authToken ? "✓ Set" : "✗ Missing",
           phoneNumber: phoneNumber ? "✓ Set" : "✗ Missing",
+          geminiApiKey: geminiApiKey ? "✓ Set" : "✗ Missing",
         },
       });
     }
@@ -61,6 +63,9 @@ export async function GET(request: NextRequest) {
             "2. Check Twilio Console > Messaging > Try it out > Send a WhatsApp message",
             "3. Make sure you've joined the sandbox by sending 'join <code>' to the sandbox number",
             "4. Your phone number format should be: whatsapp:+1234567890",
+            "5. Get your Gemini API key from https://makersuite.google.com/app/apikey",
+            "6. AI Support: " +
+              (geminiApiKey ? "✓ Enabled" : "✗ Disabled - Set GEMINI_API_KEY"),
           ],
         },
       });

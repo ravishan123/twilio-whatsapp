@@ -19,6 +19,8 @@ import {
   Wifi,
   AlertCircle,
   X,
+  Bot,
+  Sparkles,
 } from "lucide-react";
 
 export default function Home() {
@@ -28,6 +30,8 @@ export default function Home() {
     "whatsapp:+94728268717"
   );
   const [error, setError] = useState<string | null>(null);
+  const [aiSuggestion, setAiSuggestion] = useState<string>("");
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
   // Fetch messages from the API
   const fetchMessages = useCallback(async () => {
@@ -82,6 +86,52 @@ export default function Home() {
     }
   };
 
+  // Generate AI suggestion for response
+  const generateAISuggestion = async () => {
+    if (!targetPhoneNumber.trim()) return;
+
+    setIsGeneratingAI(true);
+    setError(null);
+
+    try {
+      const lastMessage = messages
+        .filter(
+          (msg) =>
+            msg.from === targetPhoneNumber && msg.direction === "incoming"
+        )
+        .slice(-1)[0];
+
+      if (!lastMessage) {
+        setError("No incoming messages to respond to");
+        return;
+      }
+
+      const response = await fetch("/api/ai-reply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userMessage: lastMessage.body,
+          phoneNumber: targetPhoneNumber,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setAiSuggestion(data.reply);
+      } else {
+        setError(data.error || "Failed to generate AI suggestion");
+      }
+    } catch (err) {
+      console.error("Error generating AI suggestion:", err);
+      setError("Failed to generate AI suggestion");
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   // Poll for new messages every 3 seconds
   useEffect(() => {
     fetchMessages();
@@ -111,11 +161,28 @@ export default function Home() {
                   <Badge variant="outline" className="text-xs">
                     {messages.length} messages
                   </Badge>
+                  <Badge variant="default" className="text-xs">
+                    <Bot className="h-3 w-3 mr-1" />
+                    AI Support
+                  </Badge>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={generateAISuggestion}
+                disabled={isGeneratingAI || !targetPhoneNumber.trim()}
+              >
+                <Sparkles
+                  className={`h-4 w-4 mr-2 ${
+                    isGeneratingAI ? "animate-spin" : ""
+                  }`}
+                />
+                AI Suggest
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -165,6 +232,48 @@ export default function Home() {
               </Button>
             </AlertDescription>
           </Alert>
+        </div>
+      )}
+
+      {/* AI Suggestion Display */}
+      {aiSuggestion && (
+        <div className="mx-4 mb-2">
+          <Card className="border-blue-200 bg-blue-50">
+            <CardContent className="p-3">
+              <div className="flex items-start gap-2">
+                <Bot className="h-4 w-4 text-blue-600 mt-0.5" />
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-blue-800 mb-1">
+                    AI Suggestion:
+                  </div>
+                  <div className="text-sm text-blue-700 mb-2">
+                    {aiSuggestion}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        handleSendMessage(aiSuggestion);
+                        setAiSuggestion("");
+                      }}
+                      className="text-xs h-7"
+                    >
+                      Send This
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setAiSuggestion("")}
+                      className="text-xs h-7"
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 

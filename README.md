@@ -1,28 +1,33 @@
-# WhatsApp Chat App with Next.js + Twilio
+# WhatsApp AI Support Chat with Next.js + Twilio + Gemini
 
-A fullstack Next.js application that integrates with Twilio's WhatsApp API to receive incoming WhatsApp messages and reply from a web interface.
+A fullstack Next.js application that integrates with Twilio's WhatsApp API and Google's Gemini AI to provide intelligent, automated customer support responses via WhatsApp.
 
 ## Features
 
 - 📱 **WhatsApp Integration**: Receive and send WhatsApp messages via Twilio API
-- 💬 **Real-time Chat UI**: Modern chat interface with bubble layout
+- 🤖 **AI-Powered Support**: Intelligent responses using Google's Gemini AI
+- 💬 **Real-time Chat UI**: Modern chat interface with shadcn/ui components
+- ✨ **Smart Suggestions**: AI-generated response suggestions for support agents
 - 🔄 **Auto-refresh**: Polls for new messages every 3 seconds
 - 📦 **In-memory Storage**: Simple message storage for POC purposes
-- 🎨 **Modern UI**: Built with TailwindCSS and responsive design
-- 🔒 **Secure**: Environment variables for sensitive Twilio credentials
+- 🎨 **Modern UI**: Built with shadcn/ui and TailwindCSS
+- 🔒 **Secure**: Environment variables for sensitive API credentials
+- 🧠 **Context-Aware**: AI responses consider conversation history
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), React 18, TailwindCSS, TypeScript
-- **Backend**: Next.js API Routes, Twilio Node.js SDK
+- **Frontend**: Next.js 14 (App Router), React 18, shadcn/ui, TailwindCSS, TypeScript
+- **Backend**: Next.js API Routes, Twilio Node.js SDK, Google Generative AI
+- **AI**: Google Gemini Pro for intelligent responses
 - **Storage**: In-memory (for POC)
 
 ## Prerequisites
 
 1. **Twilio Account**: Sign up at [twilio.com](https://twilio.com)
 2. **WhatsApp Business Account**: Set up WhatsApp sandbox or production account
-3. **Node.js**: Version 18 or higher
-4. **ngrok** (for development): To expose local webhook endpoint
+3. **Google AI Studio Account**: Get your API key at [makersuite.google.com](https://makersuite.google.com/app/apikey)
+4. **Node.js**: Version 18 or higher
+5. **ngrok** (for development): To expose local webhook endpoint
 
 ## Setup Instructions
 
@@ -40,12 +45,13 @@ Copy the example environment file and fill in your Twilio credentials:
 cp .env.local.example .env.local
 \`\`\`
 
-Edit \`.env.local\` with your Twilio credentials:
+Edit \`.env.local\` with your Twilio and Gemini credentials:
 
 \`\`\`env
 TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
 TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
-TWILIO_PHONE_NUMBER=whatsapp:+1234567890
+TWILIO_PHONE_NUMBER=whatsapp:+14155238886
+GEMINI_API_KEY=your_gemini_api_key_here
 \`\`\`
 
 ### 3. Set up Twilio WhatsApp
@@ -96,7 +102,8 @@ ngrok http 3000
 
 - Receives incoming WhatsApp messages from Twilio
 - Stores messages in memory
-- Sends auto-reply via TwiML
+- Generates AI-powered responses using Gemini
+- Sends intelligent replies via TwiML
 
 ### \`POST /api/sendMessage\`
 
@@ -109,6 +116,12 @@ ngrok http 3000
 - Retrieves all stored messages
 - Optional query param: \`?phoneNumber=whatsapp:+1234567890\`
 - Returns: \`{ "success": true, "messages": [...], "count": 5 }\`
+
+### \`POST /api/ai-reply\`
+
+- Generates AI-powered response suggestions
+- Body: \`{ "userMessage": "Hello!", "phoneNumber": "whatsapp:+1234567890" }\`
+- Returns: \`{ "success": true, "reply": "AI generated response" }\`
 
 ### \`DELETE /api/messages\`
 
