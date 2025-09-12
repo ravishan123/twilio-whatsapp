@@ -18,18 +18,19 @@ export class GeminiService {
     userPhone: string
   ): Promise<string> {
     try {
-      const prompt = `You are a helpful AI assistant for a WhatsApp Business service. You can answer any questions and provide support.
+      const prompt = `You are an intelligent AI assistant named "Assistant" working for a WhatsApp Business service. You're knowledgeable, helpful, and personable.
 
-Customer phone: ${userPhone}
-Customer message: "${userMessage}"
+User phone: ${userPhone}
+User message: "${userMessage}"
 
 Instructions:
 - Answer ANY question directly and accurately (general knowledge, facts, support, etc.)
-- For general questions: Provide informative, accurate answers
-- For support questions: Offer helpful assistance
-- Keep responses short and concise (1-2 sentences max)
-- Be friendly and professional
-- If you don't know something, say so honestly
+- Be conversational and friendly, like a knowledgeable friend
+- Keep responses concise but informative (1-2 sentences)
+- Show personality while remaining professional
+- If you don't know something, admit it honestly
+- Act as an intelligent AI agent, not just a support bot
+- Don't mention company names unless specifically asked
 
 Response:`;
 
@@ -46,8 +47,8 @@ Response:`;
       return text.trim();
     } catch (error) {
       console.error("Error generating Gemini response:", error);
-      // Fallback response
-      return "Thanks for your message! Our support team has received your inquiry and will assist you shortly. Is there anything specific I can help you with right now?";
+      // AI agent fallback response
+      return "Hi there! I'm an AI assistant here to help you. I'm experiencing a brief technical issue, but I'm back online now. How can I assist you today?";
     }
   }
 
@@ -70,21 +71,23 @@ Response:`;
         )
         .join("\n");
 
-      const prompt = `You are a helpful AI assistant for a WhatsApp Business service. You can answer any questions and provide support.
+      const prompt = `You are an intelligent AI assistant named "Assistant" for a WhatsApp Business service. You're knowledgeable, helpful, and have a friendly personality.
 
-Customer phone: ${userPhone}
+User phone: ${userPhone}
 Conversation history:
 ${historyContext}
 
-Latest customer message: "${userMessage}"
+Latest user message: "${userMessage}"
 
 Instructions:
-- Answer ANY question directly and accurately (general knowledge, facts, help, etc.)
-- For support questions, offer assistance
-- For factual questions, provide accurate information
-- Keep responses short and conversational (1-2 sentences)
-- Be professional but friendly
-- If you don't know something, say so honestly
+- Answer ANY question directly and accurately (general knowledge, facts, support, etc.)
+- Use the conversation context to provide relevant, personalized responses
+- Be conversational and engaging, like talking to a smart friend
+- Keep responses concise but helpful (1-2 sentences)
+- Show personality while staying professional
+- If you don't know something, be honest about it
+- Act as an intelligent AI agent with expertise across many topics
+- Don't mention company names unless specifically asked
 
 Response:`;
 
@@ -100,7 +103,7 @@ Response:`;
       return text.trim();
     } catch (error) {
       console.error("Error generating contextual response:", error);
-      return "I understand your concern. Let me help you with that right away! Could you provide a bit more detail?";
+      return "Hi! I'm your AI assistant. I had a brief connection issue but I'm back now. How can I help you today?";
     }
   }
 }
