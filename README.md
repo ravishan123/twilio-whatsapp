@@ -1,6 +1,84 @@
 # WhatsApp AI Support Chat with Next.js + Twilio + Gemini
 
-A fullstack Next.js application that integrates with Twilio's WhatsApp API and Google's Gemini AI to provide intelligent, automated customer support responses via WhatsApp.
+A fullstack Next.js application that integrates with Twilio's WhatsApp API and Google's Gemini AI to provide intelligent, automated customer support responses via WhatsApp, featuring separate chat views and real-time message handling.
+
+## System Architecture
+
+### Message Flow Diagrams
+
+#### 1. Sending a Message
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant MessageStore
+    participant Twilio
+    participant WhatsApp
+
+    User->>Frontend: Types message
+    Frontend->>Backend: POST /api/sendMessage
+    Backend->>Twilio: Send message
+    Backend->>MessageStore: Store outgoing message
+    Twilio->>WhatsApp: Deliver message
+    Frontend->>Backend: Poll for updates
+    Backend->>MessageStore: Get updated messages
+    Backend->>Frontend: Return updates
+    Frontend->>User: Update UI
+```
+
+#### 2. Receiving a Message
+```mermaid
+sequenceDiagram
+    participant WhatsApp
+    participant Twilio
+    participant Backend
+    participant MessageStore
+    participant AI
+    participant Frontend
+
+    WhatsApp->>Twilio: Send message
+    Twilio->>Backend: Webhook POST /api/webhook
+    Backend->>MessageStore: Store incoming message
+    Backend->>AI: Generate response
+    AI->>Backend: Return AI reply
+    Backend->>Twilio: Send response (TwiML)
+    Backend->>MessageStore: Store AI response
+    Twilio->>WhatsApp: Deliver AI response
+    Frontend->>Backend: Poll for updates
+    Backend->>Frontend: Return new messages
+```
+
+#### 3. Chat Management System
+```mermaid
+graph TD
+    A[Frontend] -->|Poll every 3s| B[Backend APIs]
+    B -->|/api/messages| C[Message Store]
+    B -->|/api/messages/previews| C
+    C -->|Messages| D[Chat List]
+    C -->|Messages| E[Active Chat]
+    D -->|Select Chat| E
+    E -->|Send Message| F[Twilio API]
+    F -->|Webhook| B
+```
+
+## Component Interactions
+
+### 1. Frontend Components
+- **ChatList**: Shows all active conversations
+- **ChatContainer**: Displays messages for selected chat
+- **MessageInput**: Handles message composition and sending
+- **SetupGuide**: Provides configuration instructions
+
+### 2. Backend Services
+- **Message API**: Handles message retrieval and storage
+- **Webhook Handler**: Processes incoming Twilio messages
+- **AI Service**: Generates intelligent responses
+- **MessageStore**: Manages chat state and history
+
+### 3. External Services
+- **Twilio API**: Handles WhatsApp message delivery
+- **Gemini AI**: Provides intelligent response generation
 
 ## Features
 
